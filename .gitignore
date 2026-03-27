@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+logs/
+nexus.db
+.streamlit/credentials.toml
+.streamlit/secrets.toml
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
