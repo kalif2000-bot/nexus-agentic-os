@@ -1,12 +1,18 @@
 import json
 import os
+import sys
 from textwrap import dedent
+from pathlib import Path
 
 import requests
 import streamlit as st
 from dotenv import load_dotenv
 
-from frontend.content import API_GUIDE, FAQ, KNOWLEDGE_BASE, PRICING_PLANS, USE_CASES
+CURRENT_DIR = Path(__file__).resolve().parent
+if str(CURRENT_DIR) not in sys.path:
+    sys.path.append(str(CURRENT_DIR))
+
+from content import API_GUIDE, FAQ, KNOWLEDGE_BASE, PRICING_PLANS, USE_CASES
 
 
 load_dotenv()
