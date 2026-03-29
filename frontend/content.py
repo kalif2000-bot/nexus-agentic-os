@@ -144,12 +144,21 @@ PRICING_PLANS = [
 
 
 API_GUIDE = {
-    "Register A Company": {
-        "method": "POST /companies/register",
+    "Create Workspace": {
+        "method": "POST /auth/signup",
         "body": {
             "company_name": "Acme Revenue Ops",
             "admin_email": "ops@acme.com",
+            "full_name": "Ariana Founder",
+            "password": "securepass123",
             "plan": "Growth",
+        },
+    },
+    "Login": {
+        "method": "POST /auth/login",
+        "body": {
+            "email": "ops@acme.com",
+            "password": "securepass123",
         },
     },
     "Run A Policy-Aware Decision": {

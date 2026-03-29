@@ -1,12 +1,13 @@
 import json
 import os
 import sys
-from textwrap import dedent
 from pathlib import Path
+from textwrap import dedent
 
 import requests
 import streamlit as st
 from dotenv import load_dotenv
+
 
 CURRENT_DIR = Path(__file__).resolve().parent
 if str(CURRENT_DIR) not in sys.path:
@@ -32,151 +33,58 @@ def inject_styles() -> None:
         """
         <style>
         :root {
-            --surface: rgba(255, 251, 245, 0.82);
-            --surface-strong: rgba(255, 255, 255, 0.9);
-            --ink: #161616;
-            --muted: #5e6368;
-            --accent: #e45d37;
-            --accent-2: #197278;
-            --accent-3: #f3c969;
-            --border: rgba(22, 22, 22, 0.08);
-            --shadow: 0 26px 80px rgba(31, 42, 68, 0.13);
+            --surface: rgba(255, 251, 245, 0.84);
+            --ink: #151515;
+            --muted: #5b6168;
+            --accent: #e5673b;
+            --accent-2: #1f6f78;
+            --border: rgba(21, 21, 21, 0.08);
+            --shadow: 0 26px 72px rgba(28, 41, 61, 0.14);
         }
-
         .stApp {
             background:
-                radial-gradient(circle at 10% 0%, rgba(243, 201, 105, 0.22), transparent 26%),
-                radial-gradient(circle at 100% 10%, rgba(25, 114, 120, 0.18), transparent 30%),
-                linear-gradient(180deg, #fcf8f2 0%, #f4eee3 45%, #f8f8f4 100%);
+                radial-gradient(circle at 0% 0%, rgba(244, 196, 96, 0.20), transparent 28%),
+                radial-gradient(circle at 100% 8%, rgba(31, 111, 120, 0.18), transparent 30%),
+                linear-gradient(180deg, #fcf7ef 0%, #f4eddf 48%, #f7f7f2 100%);
             color: var(--ink);
         }
-
-        .block-container {
-            max-width: 1240px;
-            padding-top: 1.2rem;
-            padding-bottom: 3.4rem;
-        }
-
-        h1, h2, h3 {
-            letter-spacing: -0.03em;
-        }
-
-        .shell, .card, .metric, .pricing, .kb, .api, .demo {
+        .block-container { max-width: 1240px; padding-top: 1.1rem; padding-bottom: 3rem; }
+        .shell, .card, .metric, .pricing, .panel, .kb {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 26px;
+            border-radius: 24px;
             box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
         }
-
-        .shell {
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
+        .shell { padding: 2rem; position: relative; overflow: hidden; }
         .shell::after {
             content: "";
             position: absolute;
             right: -60px;
-            bottom: -70px;
-            width: 240px;
-            height: 240px;
-            background: radial-gradient(circle, rgba(228, 93, 55, 0.26), transparent 70%);
+            bottom: -60px;
+            width: 230px;
+            height: 230px;
+            background: radial-gradient(circle, rgba(229, 103, 59, 0.24), transparent 70%);
         }
-
-        .card, .pricing, .kb, .api, .demo, .metric {
-            padding: 1.1rem 1.2rem;
-        }
-
+        .card, .metric, .pricing, .panel, .kb { padding: 1.05rem 1.15rem; }
         .eyebrow {
-            display: inline-block;
-            padding: 0.38rem 0.68rem;
-            border-radius: 999px;
-            background: rgba(25, 114, 120, 0.11);
-            color: var(--accent-2);
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+            display: inline-block; padding: 0.36rem 0.68rem; border-radius: 999px;
+            background: rgba(31, 111, 120, 0.10); color: var(--accent-2);
+            font-weight: 700; font-size: 0.79rem; text-transform: uppercase; letter-spacing: 0.04em;
         }
-
-        .hero-title {
-            font-size: clamp(2.7rem, 5.6vw, 5rem);
-            line-height: 0.92;
-            margin: 1rem 0;
-            font-weight: 850;
+        .hero-title { font-size: clamp(2.7rem, 5.8vw, 5rem); line-height: 0.92; margin: 1rem 0; font-weight: 850; }
+        .muted, .hero-copy { color: var(--muted); line-height: 1.7; }
+        .section-title { font-size: 2rem; font-weight: 800; margin-top: 1.35rem; margin-bottom: 0.2rem; }
+        .pills { display:flex; flex-wrap: wrap; gap:0.55rem; margin-top: 1rem; }
+        .pill { padding: 0.42rem 0.76rem; border-radius: 999px; background: rgba(21,21,21,0.06); font-size: 0.92rem; }
+        .metric-label { text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; color: var(--muted); }
+        .metric-value { font-size: 1.95rem; font-weight: 800; margin-top: 0.2rem; }
+        .price { font-size: 2.1rem; font-weight: 900; margin: 0.35rem 0; }
+        div.stButton > button, div[data-testid="stFormSubmitButton"] > button {
+            border: none; border-radius: 999px; background: linear-gradient(135deg, var(--accent), #f18a47);
+            color: #fff; font-weight: 700; padding: 0.75rem 1.25rem; box-shadow: 0 14px 28px rgba(229,103,59,0.24);
         }
-
-        .hero-copy, .muted {
-            color: var(--muted);
-            line-height: 1.7;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-top: 1.4rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-top: 1rem;
-        }
-
-        .pill {
-            padding: 0.45rem 0.76rem;
-            border-radius: 999px;
-            background: rgba(22, 22, 22, 0.06);
-            font-size: 0.92rem;
-        }
-
-        .metric-label {
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 0.82rem;
-            color: var(--muted);
-        }
-
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-top: 0.25rem;
-        }
-
-        .price {
-            font-size: 2.1rem;
-            font-weight: 900;
-            margin: 0.4rem 0;
-        }
-
-        .code-block {
-            border-radius: 20px;
-            padding: 1rem;
-            background: rgba(20, 20, 20, 0.92);
-            color: #f7f5ef;
-            overflow-x: auto;
-            font-family: Consolas, monospace;
-            font-size: 0.92rem;
-        }
-
-        div.stButton > button {
-            border: none;
-            border-radius: 999px;
-            background: linear-gradient(135deg, var(--accent), #f28047);
-            color: #fff;
-            font-weight: 700;
-            padding: 0.76rem 1.35rem;
-            box-shadow: 0 14px 28px rgba(228, 93, 55, 0.24);
-        }
-
-        .nav-note {
-            margin-bottom: 0.8rem;
-            color: var(--muted);
-        }
+        .nav-note { margin-bottom: 0.8rem; color: var(--muted); }
         </style>
         """,
         unsafe_allow_html=True,
@@ -190,10 +98,15 @@ def init_state() -> None:
     st.session_state.setdefault("deal_size", float(default["deal_size"]))
     st.session_state.setdefault("sales_context", default["sales_context"])
     st.session_state.setdefault("max_discount_percent", int(default["max_discount_percent"]))
-    st.session_state.setdefault("company_api_key", "")
-    st.session_state.setdefault("company_name", "")
-    st.session_state.setdefault("company_plan", "")
-    st.session_state.setdefault("company_email", "")
+    st.session_state.setdefault("auth_token", "")
+    st.session_state.setdefault("workspace", None)
+    st.session_state.setdefault("workspace_api_key", "")
+    st.session_state.setdefault("decision_logs", [])
+
+
+def auth_headers() -> dict:
+    token = st.session_state.get("auth_token", "")
+    return {"Authorization": f"Bearer {token}"} if token else {}
 
 
 def render_html_card(title: str, body: str, eyebrow: str | None = None, class_name: str = "card") -> None:
@@ -202,12 +115,55 @@ def render_html_card(title: str, body: str, eyebrow: str | None = None, class_na
         f"""
         <div class="{class_name}">
             {eyebrow_html}
-            <h3 style="margin-top:0.75rem;">{title}</h3>
+            <h3 style="margin-top:0.7rem;">{title}</h3>
             <p class="muted" style="margin-bottom:0;">{body}</p>
         </div>
         """,
         unsafe_allow_html=True,
     )
+
+
+def api_request(method: str, path: str, payload: dict | None = None, headers: dict | None = None):
+    try:
+        response = requests.request(
+            method=method,
+            url=f"{API_BASE_URL}{path}",
+            json=payload,
+            headers=headers or {},
+            timeout=60,
+        )
+        response.raise_for_status()
+        if response.text:
+            return response.json()
+        return None
+    except requests.RequestException as exc:
+        st.error(f"Request failed: {exc}")
+        return None
+
+
+def set_workspace(auth_response: dict) -> None:
+    st.session_state["auth_token"] = auth_response["token"]
+    st.session_state["workspace"] = auth_response["workspace"]
+    api_keys = auth_response["workspace"].get("api_keys", [])
+    st.session_state["workspace_api_key"] = api_keys[0]["api_key"] if api_keys else ""
+    policy = auth_response["workspace"].get("policy")
+    if policy:
+        st.session_state["max_discount_percent"] = int(policy["max_discount_percent"])
+
+
+def refresh_workspace() -> None:
+    data = api_request("GET", "/workspace", headers=auth_headers())
+    if data:
+        st.session_state["workspace"] = data
+        api_keys = data.get("api_keys", [])
+        active = next((key["api_key"] for key in api_keys if key["is_active"] == 1), "")
+        st.session_state["workspace_api_key"] = active
+
+
+def refresh_decisions() -> None:
+    data = api_request("GET", "/workspace/decisions", headers=auth_headers())
+    if data is not None:
+        st.session_state["decision_logs"] = data
 
 
 def set_scenario(use_case: dict) -> None:
@@ -218,85 +174,55 @@ def set_scenario(use_case: dict) -> None:
     st.session_state["max_discount_percent"] = int(use_case["max_discount_percent"])
 
 
-def post_json(path: str, payload: dict, headers: dict | None = None) -> dict | None:
-    try:
-        response = requests.post(f"{API_BASE_URL}{path}", json=payload, headers=headers or {}, timeout=60)
-        response.raise_for_status()
-        return response.json()
-    except requests.RequestException as exc:
-        st.error(f"Request failed: {exc}")
-        return None
-
-
 def render_home() -> None:
     st.markdown(
         """
         <div class="shell">
-            <span class="eyebrow">Global AI Infrastructure</span>
+            <span class="eyebrow">Policy-Aware AI Infrastructure</span>
             <div class="hero-title">Nexus Agentic OS</div>
             <p class="hero-copy">
-                The control plane for companies adopting AI agents in revenue, operations, finance, and support.
-                Nexus makes agent decisions safe, explainable, and policy-compliant before they hit real workflows.
+                Nexus helps companies deploy AI agents safely by enforcing business policy before any agent decision
+                reaches a revenue workflow, refund system, approval chain, or customer-facing process.
             </p>
             <div class="pills">
-                <div class="pill">Tenant-aware API access</div>
-                <div class="pill">Company onboarding portal</div>
-                <div class="pill">Policy-aware decision correction</div>
-                <div class="pill">Investor-ready product story</div>
+                <div class="pill">Company workspaces</div>
+                <div class="pill">Bearer-auth dashboard</div>
+                <div class="pill">Tenant API keys</div>
+                <div class="pill">Saved policies and decision logs</div>
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    metrics = st.columns(4)
-    metric_data = [
-        ("Core Story", "AI control layer", "From agent output to safe action"),
-        ("Portal Modes", "6", "Marketing, pricing, docs, onboarding, dashboard, knowledge"),
-        ("API Surface", "3 endpoints", "Register company, run demo, run secure company flow"),
-        ("Device Reach", "Responsive", "Phone, tablet, laptop, and desktop friendly"),
+    cols = st.columns(4)
+    metrics = [
+        ("Platform", "Control Layer", "Between agents and systems"),
+        ("Core Modules", "5", "Auth, policy, keys, logs, API"),
+        ("Primary Wedge", "Revenue Ops", "Pricing and approval controls"),
+        ("Deployment", "Public SaaS", "Phone, tablet, desktop ready"),
     ]
-    for col, (label, value, caption) in zip(metrics, metric_data):
+    for col, (label, value, caption) in zip(cols, metrics):
         with col:
             st.markdown(
-                f"""
-                <div class="metric">
-                    <div class="metric-label">{label}</div>
-                    <div class="metric-value">{value}</div>
-                    <div class="muted">{caption}</div>
-                </div>
-                """,
+                f"<div class='metric'><div class='metric-label'>{label}</div><div class='metric-value'>{value}</div><div class='muted'>{caption}</div></div>",
                 unsafe_allow_html=True,
             )
 
-    st.markdown("<div class='section-title'>What The Product Does</div>", unsafe_allow_html=True)
-    st.markdown("<p class='muted'>Nexus is positioned as a subscription product that companies plug into their own workflows. Teams register, receive API credentials, send decisions through the control layer, and get policy-safe outputs back.</p>", unsafe_allow_html=True)
-
-    cols = st.columns(3)
-    with cols[0]:
-        render_html_card("For Revenue Teams", "Prevent discounting chaos, renewal leakage, and inconsistent deal approvals by letting sales agents move fast inside hard finance guardrails.", "Revenue")
-    with cols[1]:
-        render_html_card("For Operations Leaders", "Turn prompt-only automation into governed workflows with inspectable rules, structured outputs, and repeatable decision quality.", "Ops")
-    with cols[2]:
-        render_html_card("For Investors", "Nexus targets a foundational enterprise AI problem: businesses want AI capability, but adoption depends on trust, control, and governance.", "Market")
-
-    st.markdown("<div class='section-title'>How Companies Use It</div>", unsafe_allow_html=True)
-    flow = st.columns(5)
-    steps = [
-        ("Register", "A company creates a workspace and receives an API key."),
-        ("Integrate", "Their application sends agent decisions to Nexus."),
-        ("Check", "Nexus parses the output and checks policy constraints."),
-        ("Correct", "Unsafe decisions are rewritten or escalated."),
-        ("Operate", "Teams use the final approved action with confidence."),
-    ]
-    for col, step in zip(flow, steps):
-        with col:
-            render_html_card(step[0], step[1], "Flow")
+    st.markdown("<div class='section-title'>What Companies Buy</div>", unsafe_allow_html=True)
+    st.markdown("<p class='muted'>Companies don’t buy a chatbot here. They buy safe AI decisioning: API calls come in, Nexus checks policy, and business-safe outputs come back with an audit trail.</p>", unsafe_allow_html=True)
+    feature_cols = st.columns(3)
+    with feature_cols[0]:
+        render_html_card("Decision Guardrails", "Enforce finance and operations policy before an agent recommendation becomes a real action.", "Core")
+    with feature_cols[1]:
+        render_html_card("Workspace Management", "Each company gets a tenant, dashboard, API keys, and editable policy settings.", "Core")
+    with feature_cols[2]:
+        render_html_card("Operational Visibility", "Every protected decision can be logged, reviewed, and explained to operators and leadership.", "Core")
 
 
 def render_pricing() -> None:
-    st.markdown("<div class='section-title'>Subscription Pricing</div>", unsafe_allow_html=True)
-    st.markdown("<p class='muted'>This page gives the product a clear business model. For the MVP, the pricing is illustrative and aligned to a SaaS pitch.</p>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Pricing</div>", unsafe_allow_html=True)
+    st.markdown("<p class='muted'>These plans are positioned for founder-led sales today and can later be tied to Stripe billing and usage enforcement.</p>", unsafe_allow_html=True)
     cols = st.columns(3)
     for col, plan in zip(cols, PRICING_PLANS):
         with col:
@@ -315,136 +241,225 @@ def render_pricing() -> None:
             )
 
 
-def render_portal() -> None:
-    st.markdown("<div class='section-title'>Company Portal</div>", unsafe_allow_html=True)
-    st.markdown("<p class='muted'>This is the SaaS-style onboarding surface: a company registers, gets an API key, and immediately starts sending decisions through Nexus.</p>", unsafe_allow_html=True)
+def render_auth_portal() -> None:
+    st.markdown("<div class='section-title'>Workspace Access</div>", unsafe_allow_html=True)
+    st.markdown("<p class='muted'>Create a workspace for a company or log into an existing one. This is the operator surface your customers would use before integrating the API.</p>", unsafe_allow_html=True)
+    left, right = st.columns(2)
 
-    left, right = st.columns([1, 1.1])
     with left:
-        with st.form("register_company"):
-            company_name = st.text_input("Company Name", value=st.session_state.get("company_name", ""))
-            admin_email = st.text_input("Admin Email", value=st.session_state.get("company_email", ""))
-            plan = st.selectbox("Plan", ["Starter", "Growth", "Enterprise"], index=1 if st.session_state.get("company_plan") == "Growth" else 0)
-            submitted = st.form_submit_button("Create Company Workspace")
+        with st.form("signup_form"):
+            company_name = st.text_input("Company Name")
+            full_name = st.text_input("Admin Full Name")
+            admin_email = st.text_input("Admin Email")
+            password = st.text_input("Password", type="password")
+            plan = st.selectbox("Plan", ["Starter", "Growth", "Enterprise"], index=1)
+            submitted = st.form_submit_button("Create Workspace")
 
         if submitted:
             payload = {
                 "company_name": company_name,
+                "full_name": full_name,
                 "admin_email": admin_email,
+                "password": password,
                 "plan": plan,
             }
-            data = post_json("/companies/register", payload)
+            data = api_request("POST", "/auth/signup", payload=payload)
             if data:
-                st.session_state["company_api_key"] = data["api_key"]
-                st.session_state["company_name"] = data["company_name"]
-                st.session_state["company_plan"] = data["plan"]
-                st.session_state["company_email"] = data["admin_email"]
-                st.success("Company registered. API key created.")
-                st.json(data)
+                set_workspace(data)
+                st.success("Workspace created and logged in.")
+                refresh_decisions()
 
     with right:
+        with st.form("login_form"):
+            email = st.text_input("Workspace Email")
+            password = st.text_input("Workspace Password", type="password")
+            submitted = st.form_submit_button("Log In")
+
+        if submitted:
+            data = api_request("POST", "/auth/login", payload={"email": email, "password": password})
+            if data:
+                set_workspace(data)
+                st.success("Logged into workspace.")
+                refresh_decisions()
+
+    if st.session_state.get("workspace"):
+        workspace = st.session_state["workspace"]
         render_html_card(
-            "What The Company Gets",
-            "Each company receives a tenant API key, a dedicated workspace identity, and a secure endpoint they can call from their applications. This is the foundation for a subscription product.",
-            "Workspace",
-            class_name="demo",
+            f"{workspace['company']['company_name']} is active",
+            f"Logged in as {workspace['admin_user']['email']} on the {workspace['company']['plan']} plan.",
+            "Session",
+            class_name="panel",
         )
-        if st.session_state["company_api_key"]:
-            st.markdown("<div class='api' style='margin-top:1rem;'>", unsafe_allow_html=True)
-            st.markdown("<div class='eyebrow'>Issued API Key</div>", unsafe_allow_html=True)
-            st.code(st.session_state["company_api_key"])
-            st.markdown(f"**Workspace:** {st.session_state['company_name']}  \n**Plan:** {st.session_state['company_plan']}")
-            st.markdown("</div>", unsafe_allow_html=True)
-        else:
-            st.info("Register a company to generate a tenant API key and unlock the secure API flow.")
 
-    st.markdown("<div class='section-title'>Secure Workspace Demo</div>", unsafe_allow_html=True)
-    scenario_names = [case["name"] for case in USE_CASES]
-    current_name = st.session_state.get("selected_use_case", scenario_names[0])
-    selected_name = st.selectbox("Load a business scenario", scenario_names, index=scenario_names.index(current_name))
-    selected_case = next(case for case in USE_CASES if case["name"] == selected_name)
-    if st.button("Load Into Workspace"):
-        set_scenario(selected_case)
 
-    c1, c2 = st.columns(2)
-    with c1:
-        customer_name = st.text_input("Customer Name", key="customer_name")
-        deal_size = st.number_input("Deal Size ($)", min_value=100.0, step=500.0, key="deal_size")
-        max_discount_percent = st.slider("Finance Max Discount (%)", min_value=0, max_value=100, key="max_discount_percent")
-    with c2:
-        sales_context = st.text_area("Sales Context", key="sales_context", height=160)
-        api_key_input = st.text_input("Workspace API Key", value=st.session_state.get("company_api_key", ""), type="password")
+def render_workspace_dashboard() -> None:
+    workspace = st.session_state.get("workspace")
+    if not workspace:
+        st.info("Create or log into a workspace first.")
+        return
 
-    if st.button("Run Secure Company Request", type="primary"):
-        if not api_key_input:
-            st.warning("Create a company workspace first or paste a valid API key.")
-        else:
+    refresh_workspace()
+    refresh_decisions()
+    workspace = st.session_state["workspace"]
+    decisions = st.session_state.get("decision_logs", [])
+    policy = workspace.get("policy")
+    api_keys = workspace.get("api_keys", [])
+
+    st.markdown("<div class='section-title'>Workspace Dashboard</div>", unsafe_allow_html=True)
+    stats = st.columns(4)
+    with stats[0]:
+        st.metric("Company", workspace["company"]["company_name"])
+    with stats[1]:
+        st.metric("Plan", workspace["company"]["plan"])
+    with stats[2]:
+        st.metric("API Keys", len(api_keys))
+    with stats[3]:
+        st.metric("Logged Decisions", len(decisions))
+
+    tabs = st.tabs(["Overview", "Policy", "API Keys", "Decision Sandbox", "Decision Logs"])
+
+    with tabs[0]:
+        cols = st.columns(2)
+        with cols[0]:
+            render_html_card(
+                "Company Overview",
+                f"Admin: {workspace['admin_user']['full_name']} ({workspace['admin_user']['email']}). Workspace created on {workspace['company']['created_at']}.",
+                "Workspace",
+                class_name="panel",
+            )
+        with cols[1]:
+            render_html_card(
+                "Active Policy",
+                f"{policy['policy_name']} with max discount {policy['max_discount_percent']}%. Auto-correct is {'enabled' if policy['auto_correct'] else 'disabled'}.",
+                "Policy",
+                class_name="panel",
+            )
+
+    with tabs[1]:
+        with st.form("policy_form"):
+            policy_name = st.text_input("Policy Name", value=policy["policy_name"])
+            max_discount_percent = st.slider("Max Discount Percent", min_value=0, max_value=100, value=int(policy["max_discount_percent"]))
+            auto_correct = st.checkbox("Auto-correct unsafe decisions", value=bool(policy["auto_correct"]))
+            escalation_message = st.text_area("Escalation Message", value=policy.get("escalation_message") or "", height=120)
+            submitted = st.form_submit_button("Save Policy")
+
+        if submitted:
+            payload = {
+                "policy_name": policy_name,
+                "max_discount_percent": max_discount_percent,
+                "auto_correct": auto_correct,
+                "escalation_message": escalation_message,
+            }
+            data = api_request("PUT", "/workspace/policy", payload=payload, headers=auth_headers())
+            if data:
+                st.success("Policy updated.")
+                refresh_workspace()
+
+    with tabs[2]:
+        key_cols = st.columns([1, 1.4])
+        with key_cols[0]:
+            with st.form("api_key_form"):
+                label = st.text_input("New API Key Label", value="Staging Key")
+                submitted = st.form_submit_button("Create API Key")
+            if submitted:
+                data = api_request("POST", "/workspace/api-keys", payload={"label": label}, headers=auth_headers())
+                if data:
+                    st.success("API key created.")
+                    refresh_workspace()
+        with key_cols[1]:
+            for key in api_keys:
+                st.markdown(f"**{key['label']}**  \n`{key['api_key']}`  \nStatus: {'active' if key['is_active'] else 'revoked'}")
+                if key["is_active"] == 1 and st.button(f"Revoke {key['label']}", key=f"revoke-{key['id']}"):
+                    api_request("DELETE", f"/workspace/api-keys/{key['id']}", headers=auth_headers())
+                    refresh_workspace()
+                    st.success("API key revoked.")
+
+    with tabs[3]:
+        scenario_names = [case["name"] for case in USE_CASES]
+        selected_name = st.selectbox("Scenario", scenario_names, index=scenario_names.index(st.session_state["selected_use_case"]))
+        selected_case = next(case for case in USE_CASES if case["name"] == selected_name)
+        if st.button("Load Scenario", key="load-sandbox"):
+            set_scenario(selected_case)
+
+        c1, c2 = st.columns(2)
+        with c1:
+            customer_name = st.text_input("Customer Name", key="customer_name")
+            deal_size = st.number_input("Deal Size ($)", min_value=100.0, step=500.0, key="deal_size")
+            max_discount = st.slider("Max Discount (%)", 0, 100, key="max_discount_percent")
+        with c2:
+            sales_context = st.text_area("Sales Context", key="sales_context", height=160)
+            api_key_input = st.text_input("Workspace API Key", value=st.session_state.get("workspace_api_key", ""), type="password")
+
+        if st.button("Run Protected Decision", type="primary"):
             payload = {
                 "customer_name": customer_name,
                 "deal_size": deal_size,
                 "sales_context": sales_context,
-                "max_discount_percent": max_discount_percent,
+                "max_discount_percent": max_discount,
             }
             headers = {"x-api-key": api_key_input}
-            data = post_json("/api/run", payload, headers=headers)
+            data = api_request("POST", "/api/run", payload=payload, headers=headers)
             if data:
-                st.success(f"Decision processed for {data['company']['company_name']}.")
-                tabs = st.tabs(["Workspace", "Decision", "JSON"])
-                with tabs[0]:
-                    st.json(data["company"])
-                with tabs[1]:
-                    st.write(data["sales_agent"]["raw_text"])
-                    if data["finance_policy"]["conflict_detected"]:
-                        st.error(data["finance_policy"]["violation_reason"])
-                    else:
-                        st.success("No policy conflict detected.")
-                    st.write(data["final_decision"]["decision_summary"])
-                with tabs[2]:
-                    st.json(data)
+                st.success("Decision completed.")
+                st.json(data)
+                refresh_decisions()
+
+    with tabs[4]:
+        if not decisions:
+            st.info("No decisions logged yet.")
+        else:
+            for row in decisions:
+                render_html_card(
+                    f"{row['customer_name']} — approved {row['approved_discount_percent']}%",
+                    f"Suggested {row['suggested_discount_percent']}%. Conflict detected: {'yes' if row['conflict_detected'] else 'no'}. {row['decision_summary']}",
+                    row["created_at"],
+                    class_name="panel",
+                )
 
 
 def render_api_docs() -> None:
-    st.markdown("<div class='section-title'>Developer API</div>", unsafe_allow_html=True)
-    st.markdown("<p class='muted'>This gives companies a direct integration story: register a workspace, issue an API key, and send decisions through a tenant-aware endpoint.</p>", unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
+    st.markdown("<div class='section-title'>API Docs</div>", unsafe_allow_html=True)
+    st.markdown("<p class='muted'>These are the core APIs a customer integrates with in Nexus v2.</p>", unsafe_allow_html=True)
 
-    with col1:
-        register = API_GUIDE["Register A Company"]
-        st.markdown("<div class='api'>", unsafe_allow_html=True)
-        st.markdown("<div class='eyebrow'>Endpoint</div>", unsafe_allow_html=True)
-        st.markdown(f"### {register['method']}")
-        st.code(json.dumps(register["body"], indent=2), language="json")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with col2:
+    docs_tabs = st.tabs(["Auth", "Workspace", "Protected Run", "cURL"])
+    with docs_tabs[0]:
+        st.markdown(f"### {API_GUIDE['Create Workspace']['method']}")
+        st.code(json.dumps(API_GUIDE["Create Workspace"]["body"], indent=2), language="json")
+        st.markdown(f"### {API_GUIDE['Login']['method']}")
+        st.code(json.dumps(API_GUIDE["Login"]["body"], indent=2), language="json")
+    with docs_tabs[1]:
+        st.markdown("### GET /workspace")
+        st.markdown("Header: `Authorization: Bearer <token>`")
+        st.markdown("### PUT /workspace/policy")
+        st.markdown("Header: `Authorization: Bearer <token>`")
+        st.markdown("### POST /workspace/api-keys")
+        st.markdown("Header: `Authorization: Bearer <token>`")
+        st.markdown("### GET /workspace/decisions")
+        st.markdown("Header: `Authorization: Bearer <token>`")
+    with docs_tabs[2]:
         run_api = API_GUIDE["Run A Policy-Aware Decision"]
-        st.markdown("<div class='api'>", unsafe_allow_html=True)
-        st.markdown("<div class='eyebrow'>Secure Endpoint</div>", unsafe_allow_html=True)
         st.markdown(f"### {run_api['method']}")
         st.code(json.dumps(run_api["headers"], indent=2), language="json")
         st.code(json.dumps(run_api["body"], indent=2), language="json")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    curl_example = dedent(
-        """
-        curl -X POST "https://your-backend-service.onrender.com/api/run" \
-          -H "Content-Type: application/json" \
-          -H "x-api-key: nexus_your_company_key" \
-          -d '{
-            "customer_name": "Acme Corp",
-            "deal_size": 12000,
-            "sales_context": "The customer wants a large incentive to close this week.",
-            "max_discount_percent": 15
-          }'
-        """
-    ).strip()
-    st.markdown("<div class='section-title'>Copy-Paste Example</div>", unsafe_allow_html=True)
-    st.code(curl_example, language="bash")
+    with docs_tabs[3]:
+        curl_example = dedent(
+            """
+            curl -X POST "https://your-backend-service.onrender.com/api/run" \
+              -H "Content-Type: application/json" \
+              -H "x-api-key: nexus_your_company_key" \
+              -d '{
+                "customer_name": "Acme Corp",
+                "deal_size": 12000,
+                "sales_context": "The customer wants a large incentive to close this week.",
+                "max_discount_percent": 15
+              }'
+            """
+        ).strip()
+        st.code(curl_example, language="bash")
 
 
 def render_use_cases() -> None:
-    st.markdown("<div class='section-title'>Extensive Use Cases</div>", unsafe_allow_html=True)
-    st.markdown("<p class='muted'>These examples show how Nexus can be sold as horizontal infrastructure across multiple decision-heavy workflows.</p>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Use Cases</div>", unsafe_allow_html=True)
     for use_case in USE_CASES:
         cols = st.columns([1.3, 1])
         with cols[0]:
@@ -456,24 +471,20 @@ def render_use_cases() -> None:
                     f"Outcome: {use_case['outcome']}"
                 ),
                 use_case["industry"],
-                class_name="demo",
+                class_name="panel",
             )
         with cols[1]:
             render_html_card(
-                "Launch Parameters",
-                f"Customer: {use_case['customer_name']}. Deal size: ${use_case['deal_size']:,}. Max discount: {use_case['max_discount_percent']}%. Load this scenario into the company portal to demonstrate tenant-aware execution.",
-                "Scenario",
+                "How It Plugs In",
+                "Customer app -> Nexus API -> policy check -> approved action -> customer system. This pattern can govern pricing, refunds, procurement, and approvals.",
+                "Integration",
+                class_name="card",
             )
-            if st.button(f"Prepare {use_case['name']}", key=f"scenario-{use_case['name']}"):
-                set_scenario(use_case)
-                st.success("Scenario loaded into the portal form.")
 
 
 def render_knowledge_base() -> None:
     st.markdown("<div class='section-title'>Knowledge Base</div>", unsafe_allow_html=True)
-    st.markdown("<p class='muted'>Built so founders, operators, and investors can understand the startup quickly.</p>", unsafe_allow_html=True)
-
-    tabs = st.tabs(["Core Concepts", "FAQ", "Roadmap"])
+    tabs = st.tabs(["Concepts", "FAQ", "Next Steps"])
     with tabs[0]:
         for title, paragraphs in KNOWLEDGE_BASE.items():
             st.markdown(
@@ -493,11 +504,11 @@ def render_knowledge_base() -> None:
     with tabs[2]:
         st.markdown(
             """
-            - Add hosted authentication for company admins
-            - Add Stripe subscriptions and billing webhooks
-            - Add per-company policy bundles and audit logs
-            - Add usage metering and monthly seat/API billing
-            - Add multi-agent workflows beyond pricing
+            1. Add Stripe subscriptions and billing portal
+            2. Move from SQLite to Postgres
+            3. Add team invites and multi-user workspaces
+            4. Add webhook integrations and Slack notifications
+            5. Add more decision workflows beyond discount approval
             """
         )
 
@@ -510,11 +521,11 @@ def main() -> None:
         """
         <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.8rem;">
             <div>
-                <div class="eyebrow">Subscription SaaS MVP</div>
-                <h1 style="margin:0.45rem 0 0.2rem 0;">Nexus Agentic OS</h1>
-                <div class="nav-note">A globally deployable company portal for policy-aware AI decision infrastructure.</div>
+                <div class="eyebrow">Nexus v2</div>
+                <h1 style="margin:0.4rem 0 0.2rem 0;">Nexus Agentic OS</h1>
+                <div class="nav-note">Workspace-ready AI control layer with auth, policy management, API keys, and decision history.</div>
             </div>
-            <div class="pill">Mobile-friendly MVP</div>
+            <div class="pill">FastAPI + Streamlit SaaS MVP</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -522,7 +533,7 @@ def main() -> None:
 
     page = st.segmented_control(
         "Navigate",
-        options=["Home", "Pricing", "Company Portal", "API Docs", "Use Cases", "Knowledge Base"],
+        options=["Home", "Pricing", "Access", "Workspace", "API Docs", "Use Cases", "Knowledge Base"],
         default="Home",
     )
 
@@ -530,8 +541,10 @@ def main() -> None:
         render_home()
     elif page == "Pricing":
         render_pricing()
-    elif page == "Company Portal":
-        render_portal()
+    elif page == "Access":
+        render_auth_portal()
+    elif page == "Workspace":
+        render_workspace_dashboard()
     elif page == "API Docs":
         render_api_docs()
     elif page == "Use Cases":
